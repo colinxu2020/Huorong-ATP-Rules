@@ -26,8 +26,6 @@ def main(input_path:str, output_path:str):
         '{"ver":"6.0","tag":"hipsuser","data":[]}'))
     auto_sum_dict = dict(json.loads(
         '{"ver":"6.0","tag":"hipsuser_auto","data":{}}'))
-    rule_id = 1
-    auto_id = 1
 
     for path, dirs, files in sorted(os.walk(input_path)):
         for filename in files:
