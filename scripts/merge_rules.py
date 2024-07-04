@@ -23,9 +23,11 @@ def main(input_path:str, output_path:str):
     """
     # sum of rules and auto
     rule_sum_dict = dict(json.loads(
-        '{"ver":"5.0","tag":"hipsuser","data":[]}'))
+        '{"ver":"6.0","tag":"hipsuser","data":[]}'))
     auto_sum_dict = dict(json.loads(
-        '{"ver":"5.0","tag":"hipsuser_auto","data":{}}'))
+        '{"ver":"6.0","tag":"hipsuser_auto","data":{}}'))
+    rule_id = 1
+    auto_id = 1
 
     for path, dirs, files in sorted(os.walk(input_path)):
         for filename in files:
@@ -36,6 +38,13 @@ def main(input_path:str, output_path:str):
                 print("Merging file: %s" % rule_full_path)
                 # loop each rule in sub rule files
                 for each_rule in rule_dict["data"]:
+                    # fix the blanks(v6)
+                    each_rule.setdefault("cmdline", "*")
+                    each_rule.setdefault("p_procname", "*")
+                    each_rule.setdefault("p_cmdline", "*")
+                    for policy in each_rule["policies"]:
+                        policy.setdefault("res_cmdline", "*")
+                        
                     rule_sum_dict["data"] = rule_sum_dict["data"] + \
                         [each_rule]  # add them up
 
@@ -45,6 +54,12 @@ def main(input_path:str, output_path:str):
                 print("Merging file: %s" % auto_full_path)
                 # loop each auto in sub auto files
                 for each_key in dict(auto_dict["data"]).keys():
+                    # fix the blanks(v6)
+                    for task in auto_dict["data"][each_key]:
+                        task.setdefault("res_cmdline", "*")
+                        task.setdefault("cmdline", '*')
+                        task.setdefault("p_procname",'*')
+                        task.setdefault("p_cmdline",'*')
                     # check if key already exist
                     if dict(auto_sum_dict["data"]).get(each_key) is None:
                         # frist one
